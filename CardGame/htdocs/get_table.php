@@ -4,30 +4,35 @@ $host = 'mysql';
 $username = 'cardGame';
 $password = 'card';
 $database = 'card_game';
-$table_select_name = ['users', 'user_cards'];
-$tablename;
+$table_name = [];
 
 try{
     // PDOでMySQLに接続
     $pdo = new PDO("mysql:host=$host;dbname=$database;charset=utf8", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+    // データベースからテーブルを取得
+    $sql = "show tables";
+    $stmts = $pdo->query($sql);
+    $table_name = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    $_SESSION['tables'] = $table_name;
+
     // 取得したデータをセッションに保存
     session_start();
     // データの取得
     $_SESSION['data'] = [];
     $stmt = [];
-    foreach ($table_select_name as $i => $name)
+    foreach ($table_name as $i => $name)
     {
         $sql = "SELECT * FROM " . $name;
         $stmts[$i] = $pdo->query($sql);
         $results = $stmts[$i]->fetchAll(PDO::FETCH_ASSOC);
         $_SESSION['data'][$i] = $results;
     }
-    $_SESSION['table_name'] = $table_select_name;
+    $_SESSION['table_name'] = $table_name;
 
     // リダイレクト
-    header("Location: display_select_card.php");
+    header("Location: display_table.php");
     exit();
 } catch (PDOException $e) {
     // エラー処理

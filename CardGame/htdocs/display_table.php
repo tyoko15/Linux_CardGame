@@ -1,21 +1,7 @@
 <?php
     session_start();
-
-    // -----------------------------------------------------------------
-    // 1. URLのGETパラメータからインデックスを取得し、$i に設定します。
-    // -----------------------------------------------------------------
-    $i = 0; // デフォルト値は 0
-    if (isset($_GET['index']) && is_numeric($_GET['index'])) {
-        // GETパラメータが存在し、数値であれば $i に設定
-        $requested_index = (int)$_GET['index'];
-        
-        // セッションにデータが存在する範囲内か確認
-        if (isset($_SESSION['data'][$requested_index])) {
-            $i = $requested_index;
-        }
-    }
-    // PHP関数は不要なので削除します
-    // -----------------------------------------------------------------
+    $i = 2;
+    
 ?>
 
 <!DOCTYPE html>
@@ -53,13 +39,7 @@
             background-color: #f9f9f9;
         }
     </style>
-<body>
-    
-    <h3>表示したいテーブルを選択してください:</h3>
-    <a href="display_select_card.php?index=0"><button>1ーテーブルを表示</button></a>
-    <a href="display_select_card.php?index=1"><button>2ーテーブルを表示</button></a>
-    <hr>
-    
+<body>    
     <h1><?php 
         // 存在チェックを追加し、安全に表示
         if (isset($_SESSION['table_name'][$i])) {
@@ -96,16 +76,10 @@
             } else {
                 echo "<p>no data1</p>";
             }
-            
-            // **注意:** データが表示されるたびにセッションから削除するのは非推奨です。
-            // 必要に応じて削除してください。
-            // unset($_SESSION['data'][$i]); 
-            
         } else {
             echo "<p>no data2 (インデックス: $i にデータがありません)</p>";
         }
-        echo '<a href="get_select_card.php">更新</a></p>';
+        echo '<a href="get_table.php">更新</a></p>';
     ?>
-    
 </body>
 </html>

@@ -144,6 +144,10 @@ group by user_id;
 
 
 /* カードゲーム */
+DROP USER 'cardGame'@'%';
+CREATE USER 'cardGame'@'%' IDENTIFIED BY 'card';
+GRANT ALL PRIVILEGES ON * . * TO 'cardGame'@'%';
+
 DROP DATABASE IF EXISTS card_game;
 CREATE DATABASE IF NOT EXISTS card_game;
 
