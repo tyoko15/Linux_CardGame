@@ -1,28 +1,27 @@
 <?php
+// データベースにログインする
+$host = 'mysql';
+$username = 'cardGame';
+$password = 'card';
+$database = 'card_game';
+$table_select_name = ['users', 'user_cards', 'user_decks', 'cards'];
+$tablename;
+
     session_start();
 
-    // -----------------------------------------------------------------
-    // 1. URLのGETパラメータからインデックスを取得し、$i に設定します。
-    // -----------------------------------------------------------------
-    $i = 0; // デフォルト値は 0
-    if (isset($_GET['index']) && is_numeric($_GET['index'])) {
-        // GETパラメータが存在し、数値であれば $i に設定
-        $requested_index = (int)$_GET['index'];
-        
-        // セッションにデータが存在する範囲内か確認
-        if (isset($_SESSION['data'][$requested_index])) {
-            $i = $requested_index;
-        }
+    if (isset($_GET['name'])) {
+    $_SESSION['select_user'] = $_GET['name'];
+    echo "選ばれたユーザー名は：" . htmlspecialchars($_SESSION['select_user']);
+    } else {
+        echo "ユーザー名が指定されていません。";
     }
-    // PHP関数は不要なので削除します
-    // -----------------------------------------------------------------
 ?>
 
 <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>display_data</title>
+    <title>カード合成</title>
     </head>
      <style>
         /* CSSで初期状態では全てのテーブルを非表示にします */
@@ -54,58 +53,65 @@
         }
     </style>
 <body>
-    
-    <h3>表示したいテーブルを選択してください:</h3>
-    <a href="display_select_card.php?index=0"><button>1ーテーブルを表示</button></a>
-    <a href="display_select_card.php?index=1"><button>2ーテーブルを表示</button></a>
-    <hr>
-    
-    <h1><?php 
-        // 存在チェックを追加し、安全に表示
-        if (isset($_SESSION['table_name'][$i])) {
-            echo htmlspecialchars($_SESSION['table_name'][$i]);
-        } else {
-            echo "不明なテーブル";
-        }
-    ?>_list</h1>
-    
+    <h1>合成するカードを選んでね！</h1>
     <?php
-        if (isset($_SESSION['data'][$i])) {
-            $data = $_SESSION['data'][$i];
-            
-            // ... (テーブル表示ロジックはそのまま) ...
-            if (count($data) > 0) {
-                echo "<table>";
-                echo "<thead><tr>";
-                // ヘッダー表示
-                foreach (array_keys($data[0]) as $column) {
-                    echo "<th>" . htmlspecialchars($column) . "</th>";
-                }
-                echo "</tr></thead>";
-                echo "<tbody>";
-                // データ行表示
-                foreach ($data as $row) {
-                    echo "<tr>";
-                    foreach ($row as $value) {
-                        echo "<td>" . htmlspecialchars($value) . "</td>";
+        echo "<p>a</p>";
+        echo $_SESSION['pdo'];
+
+        if (isset($_SESSION['data'][1])) 
+        {
+                // PDOでMySQLに接続
+                $pdo = new PDO("mysql:host=$host;dbname=$database;charset=utf8", $username, $password);
+                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+                // データの取得
+                $sql = "SELECT id FROM users WHERE name = 'Shimada'";
+                $stmts = $pdo->query($sql);
+                $results2 = $stmts->fetchAll(PDO::FETCH_ASSOC);
+            if ($results2) 
+            {
+                $data = $results2;
+        
+                // ... (テーブル表示ロジックはそのまま) ...
+                if (count($data) > 0) 
+                {
+                    echo "<table>";
+                    echo "<thead><tr>";
+                    // ヘッダー表示
+                    foreach (array_keys($data[0]) as $column) 
+                    {
+                        echo "<th>" . htmlspecialchars($column) . "</th>";
                     }
-                    echo "</tr>";
+                    echo "</tr></thead>";
+                    echo "<tbody>";
+                    // データ行表示
+                    foreach ($data as $row) 
+                    {
+                        echo "<tr>";
+                        foreach ($row as $key => $value) 
+                        {
+                            if ($key == 'name')
+                            {
+                                $name = htmlspecialchars($value);                        
+                                echo "<th><a href='display_select_card.php?name=" . urlencode($name) . "'>$name</a></th>";
+                            }
+                            else
+                            {
+                                echo "<th>" . htmlspecialchars($value) . "</th>";
+                            }
+                        }
+                            echo "</tr>";
+                    }
+                    echo "</tbody>";
+                    echo "</table>";
+                } 
+                else 
+                {
+                    echo "<p>no data1</p>";
                 }
-                echo "</tbody>";
-                echo "</table>";
-            } else {
-                echo "<p>no data1</p>";
+                echo '<a href="get_card.php">更新</a></p>';
             }
-            
-            // **注意:** データが表示されるたびにセッションから削除するのは非推奨です。
-            // 必要に応じて削除してください。
-            // unset($_SESSION['data'][$i]); 
-            
-        } else {
-            echo "<p>no data2 (インデックス: $i にデータがありません)</p>";
         }
-        echo '<a href="get_select_card.php">更新</a></p>';
     ?>
-    
 </body>
 </html>

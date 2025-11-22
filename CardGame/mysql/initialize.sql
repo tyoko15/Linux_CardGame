@@ -268,4 +268,7 @@ insert into cards (id, name, kind_id, level) values
 (8, 'Heavy Cavalry', 3, 2), 
 (9, 'Knight King', 3, 3); 
 
+/* web
+http://localhost/get_card.php
+*/
 
