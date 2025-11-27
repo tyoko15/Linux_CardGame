@@ -65,8 +65,11 @@ $tablename;
                 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
                 // データの取得
-                $sql = "SELECT id FROM users WHERE name = 'Shimada'";
-                $stmts = $pdo->query($sql);
+                $table = $_GET['table'];
+                $sql = "SELECT id FROM users WHERE name = :name";
+                $stmt = $pdo->prepare($sql);
+                $stmt->bindParam(':name', $table, PDO::PARAM_STR);
+                $stmt->execute();
                 $results2 = $stmts->fetchAll(PDO::FETCH_ASSOC);
             if ($results2) 
             {
