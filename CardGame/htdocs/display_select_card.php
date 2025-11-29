@@ -63,6 +63,7 @@ $tablename;
             $pdo = new PDO("mysql:host=$host;dbname=$database;charset=utf8", $username, $password);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+<<<<<<< HEAD
             // データの取得
             $selected_user = $_SESSION['select_user'];
             $stmt_user = $pdo->prepare("SELECT * FROM users WHERE name = :name");
@@ -74,6 +75,16 @@ $tablename;
             $stmt_user_cards->execute();
             $result = $stmt_user_cards->fetchAll(PDO::FETCH_ASSOC);
             if ($result) 
+=======
+                // データの取得
+                $table = $_GET['table'];
+                $sql = "SELECT id FROM users WHERE name = :name";
+                $stmt = $pdo->prepare($sql);
+                $stmt->bindParam(':name', $table, PDO::PARAM_STR);
+                $stmt->execute();
+                $results2 = $stmts->fetchAll(PDO::FETCH_ASSOC);
+            if ($results2) 
+>>>>>>> b0f5a3a7a999004af7714661a5c6dd34e1365b2b
             {
                 $data = $result;
                 // ... (テーブル表示ロジックはそのまま) ...
