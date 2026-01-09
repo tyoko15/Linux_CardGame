@@ -182,7 +182,21 @@
         echo "Name: $synthesisCard_name</p>";
         echo "種類 : $synthesisCard_kind</p>";
         echo "レベル : $synthesisCard_level</p>";
+// SELECT MAX(id) AS last_id FROM user_cards;
+        $stmt_max_id = $pdo->prepare("SELECT MAX(id) AS last_id FROM user_cards");
+        $stmt_max_id->execute();
+        $last_id = $stmt_max_id->fetchColumn(0);
+        $last_id += 1; 
+        $stmt_synthesis_data = $pdo->prepare("INSERT INTO user_cards (id, user_id, card_id) VALUES (:id, :user_id, :card_id)");
+// INSERT INTO user_cards (id, user_id, card_id) VALUES (13, 1, 5); テスト用
 
+// DELETE FROM user_cards WHERE id >= 13;       削除用
+
+// select*from user_cards;  確認用              
+        $stmt_synthesis_data->bindParam(':id', $last_id);
+        $stmt_synthesis_data->bindParam(':user_id', $id);
+        $stmt_synthesis_data->bindParam(':card_id', $synthesisCard_id);
+        $stmt_synthesis_data->execute();
         echo '<a href="display_select_user.php">ユーザー選択へ</a></p>';
         echo "<a href='display_select_card.php?name=" . urlencode($selected_user) . "'>素材選択へ</a>";
     ?>

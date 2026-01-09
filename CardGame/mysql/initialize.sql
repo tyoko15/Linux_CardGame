@@ -3,54 +3,6 @@ DROP USER 'cardGame'@'%';
 CREATE USER 'cardGame'@'%' IDENTIFIED BY 'card';
 GRANT ALL PRIVILEGES ON * . * TO 'cardGame'@'%';
 
-DROP DATABASE IF EXISTS card_game;
-CREATE DATABASE IF NOT EXISTS card_game;
-
-use card_game;
-/* ユーザーが組んだデッキ一覧 */
-DROP TABLE IF EXISTS user_decks;
-CREATE TABLE IF NOT EXISTS user_decks (
-    user_id INT PRIMARY KEY,
-    deck_id INT,
-    user_card_id INT
-);
-
-insert into user_decks (user_id, deck_id, user_card_id) values
-(1, 1, 1),
-(1, 1, 2),
-(1, 1, 3),
-(1, 2, 4),
-(1, 2, 5),
-(1, 2, 6),
-(2, 1, 7),
-(2, 1, 8),
-(2, 1, 9);
-
-/* ユーザーが所持しているカード一覧 */
-DROP TABLE IF EXISTS user_cards;
-CREATE TABLE IF NOT EXISTS user_cards(
-    id INT PRIMARY KEY,
-    user_id INT,
-    card_id INT
-);
-
-insert into user_cards (id, user_id, card_id) values
-(1, 1, 1),
-(2, 1, 2),
-(3, 1, 3),
-(4, 1, 4),
-(5, 1, 5),
-(6, 1, 6),
-(7, 2, 1),
-(8, 2, 3),
-(9, 2, 4),
-(10, 2, 5);
-
-
-
-
-
-
 // Card_Game
 // テーブル作成
 
