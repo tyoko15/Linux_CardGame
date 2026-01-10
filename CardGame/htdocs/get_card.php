@@ -4,7 +4,7 @@ $host = 'mysql';
 $username = 'cardGame';
 $password = 'card';
 $database = 'card_game';
-$table_select_name = ['users', 'user_cards', 'user_decks', 'cards'];
+$table_select_name = ['users', 'user_cards', 'cards'];
 $tablename;
 
 try{
@@ -27,7 +27,6 @@ try{
     $_SESSION['table_name'] = $table_select_name;
 
     // リダイレクト
-    // header("Location: display_select_card.php");
     header("Location: display_select_user.php");
     exit();
 } catch (PDOException $e) {

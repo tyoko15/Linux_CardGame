@@ -83,6 +83,7 @@
             echo "<p>no data2 (インデックス: $i にデータがありません)</p>";
         }
         echo '<a href="get_card.php">更新</a></p>';
+        echo '<a href="Initialization.php">データベース初期化</a></p>';
     ?>
 </body>
 </html>

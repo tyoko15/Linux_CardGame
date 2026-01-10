@@ -4,15 +4,21 @@ services:
   mysql:
     image: mysql:5.7
     volumes:
+      - ./mysql:/docker-entrypoint-initdb.d
+      # - ./mysql:/root/sql
       - db_data:/var/lib/mysql
     restart: always
     environment:
+      MYSQL_DATABASE: card_game 
+      MYSQL_USER: cardGame
+      MYSQL_PASSWORD: 'card'
       MYSQL_ROOT_PASSWORD: 'password'
 
   php-apache:
     build: ./php
     volumes:
       - ./htdocs:/var/www/html
+      - ./mysql:/var/www/mysql
     restart: always
     ports:
       - "80:80"

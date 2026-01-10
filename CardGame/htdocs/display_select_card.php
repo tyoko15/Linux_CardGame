@@ -132,7 +132,7 @@ $tablename;
                         // 合成のアンカータグ
                         if (($key == "card_id"))
                         {
-                            $stmt_id = $pdo->prepare("SELECT * FROM user_cards WHERE user_id = :user_id AND card_id = :card_id");
+                            $stmt_id = $pdo->prepare("SELECT id FROM user_cards WHERE user_id = :user_id AND card_id = :card_id");
                             $stmt_id->bindParam(':user_id', $id);
                             $stmt_id->bindParam(':card_id', $value);
                             $stmt_id->execute();
