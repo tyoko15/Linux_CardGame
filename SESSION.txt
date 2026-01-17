@@ -1,0 +1,2 @@
+$_SESSION['user_id']	// Users id
+$_SESSION['user_name'] 	// Users_name
