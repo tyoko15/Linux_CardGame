@@ -54,32 +54,27 @@
         // 取得している情報を変数にする。
         $users_name = $_SESSION['users_name'];
         $users_id = $_SESSION['users_id'];
-        $selected_card_id_1 = $_SESSION['select_card_id_1'];
-        $selected_card_id_2 = $_SESSION['select_card_id_2'];
+        $selected_card_id_1 = $_GET['select_card_id_1'];
+        $selected_card_id_2 = $_GET['select_card_id_2'];
+        $_SESSION['select_card_id_1'] = $selected_card_id_1;
+        $_SESSION['select_card_id_2'] = $selected_card_id_2;
 
-        $stmt_user_cards_card_id = $pdo->prepare("SELECT card_id FROM user_cards WHERE user_id = :user_id AND id = :id");
-        $stmt_user_cards_card_id->bindParam(':user_id', $users_id);
-        $stmt_user_cards_card_id->bindParam(':id', $selected_card_id_1);
-        $stmt_user_cards_card_id->execute();
-        $user_cards_card_id_1 = $stmt_user_cards_card_id->fetchColumn(0);
+        // 選択させた一枚目のカード
         $stmt_cards_name = $pdo->prepare("SELECT name FROM cards WHERE id = :id");
-        $stmt_cards_name->bindParam(':id', $user_cards_card_id_1);
+        $stmt_cards_name->bindParam(':id', $selected_card_id_1);
         $stmt_cards_name->execute();
         $name1 = $stmt_cards_name->fetchColumn(0);
 
-        $stmt_user_cards_card_id = $pdo->prepare("SELECT card_id FROM user_cards WHERE user_id = :user_id AND id = :id");
-        $stmt_user_cards_card_id->bindParam(':user_id', $users_id);
-        $stmt_user_cards_card_id->bindParam(':id', $selected_card_id_2);
-        $stmt_user_cards_card_id->execute();
-        $user_cards_card_id_2 = $stmt_user_cards_card_id->fetchColumn(0);
+        // 選択させた二枚目のカード
         $stmt_name = $pdo->prepare("SELECT name FROM cards WHERE id = :id");
-        $stmt_name->bindParam(':id', $user_cards_card_id_2);
+        $stmt_name->bindParam(':id', $selected_card_id_2);
         $stmt_name->execute();
         $name2 = $stmt_name->fetchColumn(0);
 
         echo "<p>ユーザー名 : $users_name</p>";
         echo "<p>選択させたカード名 : $name1</p>";
         echo "<p>選択させたカード名 : $name2</p>";
+
         // 今持っている情報
         /*
             $users_id = 選択させたuserテーブルのid
@@ -111,27 +106,25 @@
         // cardsテーブルのkindとlevelの取得
         // 1つ目のkind
         $stmt_selected_card_1_kind_id = $pdo->prepare("SELECT kind_id FROM cards WHERE id = :id");
-        $stmt_selected_card_1_kind_id->bindParam(':id', $user_cards_card_id_1);
+        $stmt_selected_card_1_kind_id->bindParam(':id', $selected_card_id_1);
         $stmt_selected_card_1_kind_id->execute();
         $selected_card_1_kind_id = $stmt_selected_card_1_kind_id->fetchColumn(0);
         // 1つ目のlevel
         $stmt_selected_card_1_kind_id = $pdo->prepare("SELECT level FROM cards WHERE id = :id");
-        $stmt_selected_card_1_kind_id->bindParam(':id', $user_cards_card_id_1);
+        $stmt_selected_card_1_kind_id->bindParam(':id', $selected_card_id_1);
         $stmt_selected_card_1_kind_id->execute();
         $selected_card_1_level = $stmt_selected_card_1_kind_id->fetchColumn(0);
         // 2つ目のkind
         $stmt_selected_card_2_kind_id = $pdo->prepare("SELECT kind_id FROM cards WHERE id = :id");
-        $stmt_selected_card_2_kind_id->bindParam(':id', $user_cards_card_id_2);
+        $stmt_selected_card_2_kind_id->bindParam(':id', $selected_card_id_2);
         $stmt_selected_card_2_kind_id->execute();
         $selected_card_2_kind_id = $stmt_selected_card_2_kind_id->fetchColumn(0);
         // 2つ目のlevel
         $stmt_selected_card_2_kind_id = $pdo->prepare("SELECT level FROM cards WHERE id = :id");
-        $stmt_selected_card_2_kind_id->bindParam(':id', $user_cards_card_id_2);
+        $stmt_selected_card_2_kind_id->bindParam(':id', $selected_card_id_2);
         $stmt_selected_card_2_kind_id->execute();
         $selected_card_2_level = $stmt_selected_card_2_kind_id->fetchColumn(0);
         
-        echo "一つ目の種類$selected_card_1_kind_id, レベル$selected_card_1_level</p>";
-        echo "二つ目の種類$selected_card_2_kind_id, レベル$selected_card_2_level</p>";
         /* 比較 */
         // level比較
         if ($selected_card_1_level == $selected_card_2_level)           // 同じ場合
@@ -174,49 +167,99 @@
         $stmt_synthesisCard_id->bindParam(':level', $synthesisCard_level);
         $stmt_synthesisCard_id->execute();
         $synthesisCard_name = $stmt_synthesisCard_id->fetchColumn(0);
+
+        // テーブルの表示
         echo "合成結果</p>";
-        echo "ID: $synthesisCard_id</p>";
-        echo "Name: $synthesisCard_name</p>";
-        echo "種類 : $synthesisCard_kind</p>";
-        echo "レベル : $synthesisCard_level</p>";
+        $stmt_synthesisCard = $pdo->prepare("SELECT name, kind_id, level FROM cards WHERE id = :id");
+        $stmt_synthesisCard->bindParam(':id', $synthesisCard_id);
+        $stmt_synthesisCard->execute();
+        $result = $stmt_synthesisCard->fetchAll(PDO::FETCH_ASSOC);
+        $data = $result;
+        if (count($data) > 0) 
+        {
+            echo "<table>";
+            echo "<thead><tr>";
+            // ヘッダー表示
+            echo "<th>カード名</th>";
+            echo "<th>種類</th>";
+            echo "<th>レベル</th>";
+            echo "</tr></thead>";
+            echo "<tbody>";
+            // データ行表示
+            foreach ($data as $row) 
+            {
+            echo "<tr>";
+            foreach ($row as $key => $value) 
+            {
+                echo "<td>" . htmlspecialchars($value) . "</td>";
+            }
+            echo "</tr>";
+            }
+            echo "</tbody>";
+            echo "</table>";
+        } 
+        else 
+        {
+            echo "<p>no data1</p>";
+        }
+        // echo "合成結果</p>";
+        // echo "ID: $synthesisCard_id</p>";
+        // echo "Name: $synthesisCard_name</p>";
+        // echo "種類 : $synthesisCard_kind</p>";
+        // echo "レベル : $synthesisCard_level</p>";
 // SELECT MAX(id) AS last_id FROM user_cards;
 // INSERT INTO user_cards (id, user_id, card_id) VALUES (13, 1, 5); テスト用
 
 // DELETE FROM user_cards WHERE id >= 13;       削除用
 
 // select*from user_cards;  確認用  
-        // 合成後を登録
-        $stmt_max_id = $pdo->prepare("SELECT MAX(id) AS last_id FROM user_cards");
-        $stmt_max_id->execute();
-        $last_id = $stmt_max_id->fetchColumn(0);
-        $last_id += 1; 
-        $stmt_synthesis_data = $pdo->prepare("INSERT INTO user_cards (id, user_id, card_id) VALUES (:id, :user_id, :card_id)");
-        $stmt_synthesis_data->bindParam(':id', $last_id);
-        $stmt_synthesis_data->bindParam(':user_id', $users_id);
-        $stmt_synthesis_data->bindParam(':card_id', $synthesisCard_id);
-        $stmt_synthesis_data->execute();
-        // 2つの素材を削除
-        echo '選択中素材カード1ID</p>';
-        echo htmlspecialchars($selected_card_id_1, ENT_QUOTES, 'UTF-8');
-        echo '</p>';
-        echo '選択中素材カード2ID</p>';
-        echo htmlspecialchars($selected_card_id_2, ENT_QUOTES, 'UTF-8');
-        echo '</p>';
-        $stmt_delete_card_1 = $pdo->prepare("DELETE FROM user_cards WHERE user_id = :user_id AND card_id = :card_id");
-        $stmt_delete_card_1->bindParam(':user_id', $users_id);
-        $stmt_delete_card_1->bindParam(':card_id', $selected_card_id_1);
-        $stmt_delete_card_1->execute();        
-        $stmt_delete_card_2 = $pdo->prepare("DELETE FROM user_cards WHERE user_id = :user_id AND card_id = :card_id");
-        $stmt_delete_card_2->bindParam(':user_id', $users_id);
-        $stmt_delete_card_2->bindParam(':card_id', $selected_card_id_2);
-        $stmt_delete_card_2->execute();
+        
+        // 更新されて増えるのを阻止
+
+        $stmt_have_card_1 = $pdo->prepare("SELECT * FROM user_cards WHERE user_id = :user_id AND card_id = :select_card_id");
+        $stmt_have_card_1->bindParam(':user_id', $users_id);
+        $stmt_have_card_1->bindParam(':select_card_id', $selected_card_id_1);
+        $stmt_have_card_1->execute();
+        $have_card_1 = $stmt_have_card_1->fetchColumn(0);
+
+        $stmt_have_card_2 = $pdo->prepare("SELECT * FROM user_cards WHERE user_id = :user_id AND card_id = :select_card_id");
+        $stmt_have_card_2->bindParam(':user_id', $users_id);
+        $stmt_have_card_2->bindParam(':select_card_id', $selected_card_id_2);
+        $stmt_have_card_2->execute();
+        $have_card_2 = $stmt_have_card_2->fetchColumn(0);
+
+        if ($have_card_1 != null || $have_card_2 != null)
+        {
+            // 2つの素材を削除
+            $stmt_delete_card_1 = $pdo->prepare("DELETE FROM user_cards WHERE user_id = :user_id AND card_id = :card_id");
+            $stmt_delete_card_1->bindParam(':user_id', $users_id);
+            $stmt_delete_card_1->bindParam(':card_id', $selected_card_id_1);
+            $stmt_delete_card_1->execute();        
+            $stmt_delete_card_2 = $pdo->prepare("DELETE FROM user_cards WHERE user_id = :user_id AND card_id = :card_id");
+            $stmt_delete_card_2->bindParam(':user_id', $users_id);
+            $stmt_delete_card_2->bindParam(':card_id', $selected_card_id_2);
+            $stmt_delete_card_2->execute();
+            // 合成後を登録
+            $stmt_max_id = $pdo->prepare("SELECT MAX(id) AS last_id FROM user_cards");
+            $stmt_max_id->execute();
+            $last_id = $stmt_max_id->fetchColumn(0);
+            $last_id += 1; 
+            $stmt_synthesis_data = $pdo->prepare("INSERT INTO user_cards (id, user_id, card_id) VALUES (:id, :user_id, :card_id)");
+            $stmt_synthesis_data->bindParam(':id', $last_id);
+            $stmt_synthesis_data->bindParam(':user_id', $users_id);
+            $stmt_synthesis_data->bindParam(':card_id', $synthesisCard_id);
+            $stmt_synthesis_data->execute();
+        }
+
+
 
         $stmt_user_cards = $pdo->prepare("SELECT card_id FROM user_cards WHERE user_id = :user_id");
         $stmt_user_cards->bindParam(':user_id', $users_id);
         $stmt_user_cards->execute();
         $result = $stmt_user_cards->fetchAll(PDO::FETCH_ASSOC);
-        $data = $return;
+        $data = $result;
         // テーブルの表示
+        echo "現在の所持しているカード</p>";
         if (count($data) > 0) 
         {
             echo "<table>";
@@ -249,6 +292,7 @@
 
 
         echo '<a href="display_select_user.php">ユーザー選択へ</a></p>';
-        echo "<a href='display_select_card.php?name=" . urlencode($selected_user) . "'>素材選択へ</a>";
+        // echo "<a href='display_select_card.php?name=" . urlencode($users_name) . "'>素材選択へ</a>";
+        echo "<th><a href='display_select_card.php?name=$users_name'>素材選択へ</a></th>";
     ?>
 </body>

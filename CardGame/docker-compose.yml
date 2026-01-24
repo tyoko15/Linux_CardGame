@@ -4,9 +4,10 @@ services:
   mysql:
     image: mysql:5.7
     volumes:
-      - ./mysql:/docker-entrypoint-initdb.d
-      # - ./mysql:/root/sql
-      - db_data:/var/lib/mysql
+      - ./mysql/initialize.sql:/docker-entrypoint-initdb.d/initialize.sql
+      
+      # - ./mysql:/root/mysql
+      # - db_data:/var/lib/mysql
     restart: always
     environment:
       MYSQL_DATABASE: card_game 

@@ -60,7 +60,7 @@
                         if ($key == 'name')
                         {
                             $name = htmlspecialchars($value);                        
-                            echo "<th><a href='display_select_card.php?name=$name'>$name</a></th>";
+                            echo "<th><a href='display_select_menu.php?name=$name'>$name</a></th>";
                         }
                         else
                         {

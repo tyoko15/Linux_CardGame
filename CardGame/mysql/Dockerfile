@@ -1,2 +1,7 @@
 FROM mysql:5.7
-COPY ./initialize.sql /root/
+COPY ./initialize.sql /root/sql/initialize.sql
+
+COPY ./entrypoint.sh /usr/local/bin/custom-entrypoint.sh
+RUN chmod +x /usr/local/bin/custom-entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/custom-entrypoint.sh"]

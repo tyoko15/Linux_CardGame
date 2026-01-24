@@ -47,9 +47,7 @@ $tablename;
     </style>
 <body>
     <h1>合成するカードを選んでね！</h1>
-    <?php              
-        echo $_SESSION['pdo'];
-
+    <?php
         if (isset($_SESSION['data'][1])) 
         {
             // PDOでMySQLに接続
@@ -93,6 +91,9 @@ $tablename;
                 $stmt_name->bindParam(':id', $card_id);
                 $stmt_name->execute();
                 $cards_name = $stmt_name->fetchColumn(0);
+
+                $card_id = $_GET['select_card_id_1'];
+                echo "$card_id</p>";
 
                 // 選択中のカードをリストから除外する
                 $stmt_user_cards = $pdo->prepare("SELECT card_id FROM user_cards where card_id != :card_id AND user_id = :user_id");
@@ -152,14 +153,13 @@ $tablename;
                             if (!$twice)
                             {
                                 echo "<td>";
-                                echo "<a href='display_select_card.php?name=". urlencode($users_name) ."&select_card_id_1=" . urlencode($select_user_cards_id) ."'>選択</a></p>";
+                                echo "<a href='display_select_card.php?name=". urlencode($users_name) ."&select_card_id_1=" . urlencode($value) ."'>選択</a></p>";
                                 echo "</td>";
                             }
                             else 
                             {
                                 echo "<td>";
-                                $_SESSION['select_card_id_2'] = $select_user_cards_id;
-                                echo "<a href='display_synthesis.php'>選択</a></p>";
+                                echo "<a href='display_synthesis.php?name=". urlencode($users_name) ."&select_card_id_1=" . urlencode($select_card_id_1) ."&select_card_id_2=". urlencode($value) ."'>選択</a></p>";
                                 echo "</td>";
                             }                    
                         }
